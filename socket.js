@@ -1,7 +1,29 @@
-const job = require("./job.js");
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+const job = require("./job");
+
+const app = express();
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+
 job.start();
-const io = require("socket.io")(5000, {
-  cors: { origin: "*", methods: ["GET", "POST"] },
+
+// Just to test the server in browser
+app.get("/", (req, res) => {
+  res.send("Socket.io server is running 👌");
+});
+
+// start the server
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => {
+  console.log("Server listening on port", PORT);
 });
 
 let users = []; // {user, socketId}
